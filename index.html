@@ -1,0 +1,651 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
+<title>다음 성수 브리핑</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;900&family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: full-screen slide stage, one claim per slide, motion reveals the evidence in speaking order */
+:root{
+  --bg:#0e1219; --panel:#161c27; --panel-2:#1d2533; --ink:#eef1f5; --ink-2:#aab3c1; --muted:#6f7a8b; --rule:#283245;
+  --crema:#e9a23b; --demand:#5b9cf0; --rent:#ef6b4a; --good:#5cc48f; --off:#3a4456;
+  --f-display:"Noto Serif KR","Nanum Myeongjo",Georgia,serif;
+  --f-body:"IBM Plex Sans KR",system-ui,-apple-system,"Segoe UI","Malgun Gothic",sans-serif;
+  --f-data:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --ease:cubic-bezier(.2,.7,.2,1);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;overflow:hidden}
+.deck{position:relative;height:100%;overflow:hidden}
+.slide{position:absolute;inset:0;display:grid;align-content:center;overflow-y:auto;
+  padding-block:64px 96px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  opacity:0;visibility:hidden;transform:translateX(48px);transition:opacity .55s var(--ease),transform .55s var(--ease),visibility 0s .55s}
+.slide.on{opacity:1;visibility:visible;transform:none;transition:opacity .55s var(--ease),transform .55s var(--ease),visibility 0s}
+.slide.past{transform:translateX(-48px)}
+.inner{max-width:1120px;width:100%;margin:0 auto;display:grid;gap:28px;min-width:0}
+@media (max-height:700px),(max-width:700px){.slide{align-content:start;padding-top:56px}}
+
+.eyebrow{font-family:var(--f-data);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--crema)}
+h1,h2{font-family:var(--f-display);font-weight:900;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h1{font-size:clamp(36px,7vw,84px);line-height:1.12}
+h2{font-size:clamp(26px,4vw,46px);line-height:1.22}
+h3{font-size:18px;margin:0;font-weight:600}
+p{margin:0;color:var(--ink-2);max-width:62ch}
+.lede{font-size:clamp(17px,2vw,21px);color:var(--ink-2);max-width:56ch}
+em{font-style:normal;color:var(--crema)}
+.hl-d{color:var(--demand)} .hl-r{color:var(--rent)} .hl-g{color:var(--good)}
+.mono{font-family:var(--f-data);font-variant-numeric:tabular-nums}
+.small{font-size:13px;color:var(--muted)}
+
+/* reveal motion */
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes grow{from{width:0}}
+@keyframes growY{from{transform:scaleY(0)}}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes fadein{from{opacity:0}}
+@keyframes pop{0%{opacity:0;transform:scale(.4)}70%{transform:scale(1.15)}100%{opacity:1;transform:scale(1)}}
+@keyframes strike{to{opacity:.32;filter:grayscale(1)}}
+@keyframes strikeline{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes glow{to{border-color:var(--crema);background:rgba(233,162,59,.14);color:var(--ink)}}
+.slide.on .rv{animation:rise .8s var(--ease) both;animation-delay:var(--d,0s)}
+.slide.on .grow{animation:grow 1.2s var(--ease) both;animation-delay:var(--d,0s)}
+.slide.on .fade{animation:fadein .9s ease both;animation-delay:var(--d,0s)}
+.slide.on .popin{animation:pop .6s var(--ease) both;animation-delay:var(--d,0s);transform-box:fill-box;transform-origin:center}
+.draw{stroke-dasharray:1;stroke-dashoffset:1}
+.slide.on .draw{animation:draw 1.8s var(--ease) forwards;animation-delay:var(--d,0s)}
+@media (prefers-reduced-motion:reduce){
+  .slide,.slide.on{transition:none}
+  .slide.on .rv,.slide.on .grow,.slide.on .fade,.slide.on .popin,.slide.on .draw,.slide.on .chip,.slide.on .chip::after,.slide.on .step{animation:none!important}
+  .draw{stroke-dashoffset:0}
+  .slide.on .chip.out{opacity:.32}.slide.on .chip.out::after{transform:scaleX(1)}
+  .slide.on .chip.win{border-color:var(--crema)}
+}
+
+/* chrome */
+.progress{position:fixed;left:0;right:0;top:env(safe-area-inset-top,0px);height:3px;background:var(--rule);z-index:5}
+.progress i{display:block;height:100%;background:var(--crema);width:0;transition:width .5s var(--ease)}
+.ctrl{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;align-items:center;z-index:6}
+.ctrl button{font:500 14px var(--f-body);color:var(--ink);background:var(--panel-2);border:1px solid var(--rule);border-radius:999px;height:40px;min-width:40px;padding:0 14px;cursor:pointer}
+.ctrl button:hover{border-color:var(--crema)}
+.ctrl button[aria-pressed="true"]{border-color:var(--crema);color:var(--crema)}
+button:focus-visible{outline:2px solid var(--crema);outline-offset:2px}
+.count{font-family:var(--f-data);font-size:13px;color:var(--muted);padding:0 6px}
+.section-tag{position:fixed;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(26px + env(safe-area-inset-bottom,0px));font-family:var(--f-data);font-size:12px;color:var(--muted);z-index:5;letter-spacing:.06em}
+.notes{position:fixed;left:max(16px,env(safe-area-inset-left,0px));right:max(16px,env(safe-area-inset-right,0px));bottom:calc(68px + env(safe-area-inset-bottom,0px));
+  max-width:760px;margin:0 auto;background:var(--panel-2);border:1px solid var(--crema);border-radius:12px;padding:14px 18px;z-index:7;font-size:15px;color:var(--ink);box-shadow:0 12px 40px rgba(0,0,0,.45)}
+.notes b{font-family:var(--f-data);font-size:12px;color:var(--crema);display:block;margin-bottom:4px;letter-spacing:.08em}
+.hint{font-family:var(--f-data);font-size:12px;color:var(--muted)}
+@media (max-width:560px){.section-tag{display:none}.ctrl .wide{display:none}}
+
+/* shared blocks */
+.panel{background:var(--panel);border:1px solid var(--rule);border-radius:14px;padding:22px;min-width:0}
+.row{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr))}
+.scroll{overflow-x:auto}
+svg text{font-family:var(--f-body)}
+
+/* cover */
+.cover h1 span{display:block}
+.cover .bean{width:min(160px,30vw);height:auto}
+.cover-meta{display:flex;gap:10px 28px;flex-wrap:wrap;font-family:var(--f-data);font-size:13px;color:var(--muted)}
+
+/* answer cards */
+.ans{display:grid;gap:8px;align-content:start;padding:22px;border-radius:14px;background:var(--panel);border:1px solid var(--rule)}
+.ans.first{border-color:var(--crema);background:linear-gradient(160deg,rgba(233,162,59,.12),transparent 60%),var(--panel)}
+.ans .rk{font-family:var(--f-data);font-size:13px;color:var(--crema)}
+.ans .nm{font-family:var(--f-display);font-weight:900;font-size:clamp(26px,3vw,34px);line-height:1.2}
+.ans .sc{font-family:var(--f-data);font-size:40px;font-weight:500;line-height:1;color:var(--ink)}
+.ans .sc small{font-size:14px;color:var(--muted)}
+.ans p{font-size:15px}
+.concept-strip{display:flex;gap:12px 24px;align-items:center;flex-wrap:wrap;padding:16px 22px;border-radius:14px;border:1px dashed var(--crema)}
+.concept-strip b{font-family:var(--f-display);font-size:22px}
+
+/* definition */
+.eq{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:stretch}
+@media (max-width:760px){.eq{grid-template-columns:1fr}}
+.term{border-radius:14px;padding:22px;background:var(--panel);border:1px solid var(--rule);display:grid;gap:8px;align-content:start;position:relative}
+.term .k{font-family:var(--f-data);font-size:12px;color:var(--muted)}
+.term .big{font-family:var(--f-display);font-weight:900;font-size:28px}
+.term.t1 .big{color:var(--crema)} .term.t2 .big{color:var(--demand)} .term.t3 .big{color:var(--rent)}
+.not{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.tag{font-size:13px;border:1px solid var(--rule);border-radius:999px;padding:4px 12px;color:var(--ink-2)}
+.tag.x{text-decoration:line-through;text-decoration-color:var(--rent);color:var(--muted)}
+
+/* lifecycle */
+#life{display:block;width:100%;min-width:620px;height:auto}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:14px;color:var(--ink-2)}
+.legend span{display:inline-flex;gap:8px;align-items:center}
+.sw{width:20px;height:3px;border-radius:2px;display:inline-block}
+
+/* indicators */
+.ind{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:12px}
+.ind div{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;padding:14px 16px;background:var(--panel);border-radius:12px;border:1px solid var(--rule)}
+.ind .n{font-family:var(--f-data);font-size:22px;color:var(--crema)}
+.ind .w{font-family:var(--f-data);font-size:12px;color:var(--muted)}
+.ind small{display:block;color:var(--muted);font-size:13px}
+.ind .aux{border-style:dashed}
+
+/* funnel */
+.funnel{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:820px){.funnel{grid-template-columns:1fr}}
+.chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.chip{position:relative;padding:14px;border-radius:12px;background:var(--panel);border:1px solid var(--rule);display:grid;gap:2px}
+.chip b{font-size:16px}
+.chip small{font-family:var(--f-data);font-size:12px;color:var(--muted)}
+.chip::after{content:"";position:absolute;left:10px;right:10px;top:50%;height:2px;background:var(--rent);transform:scaleX(0);transform-origin:left}
+.chip.ref{border-style:dashed}
+.slide.on .chip.out{animation:strike .6s ease forwards;animation-delay:var(--d)}
+.slide.on .chip.out::after{animation:strikeline .5s var(--ease) forwards;animation-delay:var(--d)}
+.slide.on .chip.win{animation:glow .6s ease forwards;animation-delay:var(--d)}
+.steps{display:grid;gap:12px}
+.step{display:grid;grid-template-columns:auto 1fr;gap:12px;padding:14px 16px;border-left:3px solid var(--rule)}
+.step .no{font-family:var(--f-data);color:var(--crema);font-size:14px}
+.step.s1{border-color:var(--rent)} .step.s2{border-color:var(--rent)} .step.s3{border-color:var(--crema)}
+.step p{font-size:14px}
+
+/* bars */
+.bars{display:grid;gap:12px}
+.bar{display:grid;grid-template-columns:minmax(96px,150px) 1fr 56px;gap:14px;align-items:center}
+.bar .lab{font-weight:600;font-size:16px}
+.bar .lab small{display:block;font-weight:400;font-size:12px;color:var(--muted)}
+.track{height:26px;background:var(--panel);border-radius:6px;overflow:hidden;position:relative}
+.fill{height:100%;border-radius:6px;background:var(--off)}
+.fill.top{background:var(--crema)}
+.fill.d{background:var(--demand)}
+.bar .v{font-family:var(--f-data);font-size:18px;text-align:right}
+.bar.off .lab,.bar.off .v{color:var(--muted)}
+.avgline{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink);opacity:.7}
+.cmp{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(380px,100%),1fr));gap:16px}
+.cmp .bar{grid-template-columns:minmax(84px,120px) 1fr 70px}
+.cmp .track{height:20px}
+
+/* top3 detail */
+.d3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:900px){.d3{grid-template-columns:1fr}}
+.d3 article{display:grid;gap:10px;align-content:start;padding:20px;border-radius:14px;background:var(--panel);border:1px solid var(--rule);min-width:0}
+.d3 article.first{border-color:var(--crema)}
+.d3 .nm{font-family:var(--f-display);font-weight:900;font-size:26px}
+.d3 dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:14px}
+.d3 dt{font-family:var(--f-data);font-size:12px;color:var(--crema);padding-top:2px}
+.d3 dd{margin:0;color:var(--ink-2)}
+.d3 .who{font-size:13px;color:var(--muted)}
+
+/* timeline */
+#tl{display:block;width:100%;min-width:680px;height:auto}
+
+/* day bands */
+.day{display:grid;gap:14px}
+.lane{display:grid;grid-template-columns:64px 1fr;gap:12px;align-items:center}
+.lane .ln{font-family:var(--f-data);font-size:13px;color:var(--muted)}
+.hours{position:relative;height:56px;background:var(--panel);border-radius:10px;border:1px solid var(--rule)}
+.band{position:absolute;top:6px;bottom:6px;border-radius:7px;display:flex;align-items:center;padding:0 10px;font-size:13px;font-weight:600;overflow:hidden;white-space:nowrap;color:#10131a}
+.band.b1{background:var(--demand)} .band.b2{background:#8fb8f5} .band.b3{background:var(--crema)}
+.ticks{position:relative;height:18px;margin-left:76px}
+.ticks span{position:absolute;transform:translateX(-50%);font-family:var(--f-data);font-size:11px;color:var(--muted)}
+.persona{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:12px}
+.persona div{padding:16px;border-radius:12px;background:var(--panel);border-top:3px solid var(--demand);display:grid;gap:4px}
+.persona div:nth-child(2){border-top-color:#8fb8f5} .persona div:nth-child(3){border-top-color:var(--crema)}
+.persona b{font-size:16px}
+.persona p{font-size:14px}
+
+/* menu */
+.menu2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:760px){.menu2{grid-template-columns:1fr}}
+.track2{display:grid;gap:10px;align-content:start;padding:20px;border-radius:14px;background:var(--panel);border:1px solid var(--rule)}
+.track2.hi{border-color:var(--crema)}
+.item{display:flex;justify-content:space-between;gap:12px;align-items:baseline;border-bottom:1px solid var(--rule);padding-bottom:8px}
+.item span{color:var(--ink-2);font-size:15px}
+.item b{font-family:var(--f-data);font-weight:500;font-size:17px;white-space:nowrap}
+.track2.hi .item b{color:var(--crema)}
+.diff{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:12px}
+.diff div{padding:16px;border-radius:12px;border:1px solid var(--rule);display:grid;gap:4px}
+.diff b{font-size:16px}
+.diff p{font-size:14px}
+
+/* economics */
+.stack{display:flex;height:64px;border-radius:10px;overflow:hidden;width:100%}
+.stack div{height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 10px;font-size:12px;color:#10131a;font-weight:600;overflow:hidden;white-space:nowrap;min-width:0}
+.stack div b{font-family:var(--f-data);font-size:15px}
+.slide.on .stack div{animation:grow 1s var(--ease) both;animation-delay:var(--d)}
+.wf{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:end;height:220px}
+.wf .col{display:grid;grid-template-rows:auto 1fr auto;height:100%;gap:6px;text-align:center}
+.wf .val{font-family:var(--f-data);font-size:15px}
+.wf .barbox{position:relative}
+.wf .blk{position:absolute;left:12%;right:12%;border-radius:6px;transform-origin:bottom}
+.slide.on .wf .blk{animation:growY .9s var(--ease) both;animation-delay:var(--d)}
+.wf .nm{font-size:13px;color:var(--ink-2)}
+.sens{display:grid;gap:12px}
+.big-num{font-family:var(--f-data);font-size:clamp(36px,5vw,56px);line-height:1;color:var(--crema)}
+
+/* next steps */
+.next{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:12px;counter-reset:s}
+.next div{padding:18px;border-radius:12px;background:var(--panel);border:1px solid var(--rule);display:grid;gap:6px;align-content:start}
+.next .no{font-family:var(--f-data);color:var(--crema);font-size:28px;line-height:1}
+.next p{font-size:14px}
+.close{font-family:var(--f-display);font-weight:900;font-size:clamp(24px,3.4vw,38px);line-height:1.3;text-wrap:balance}
+.caveat{font-size:13px;color:var(--muted);border-top:1px solid var(--rule);padding-top:12px;max-width:none}
+
+/* appendix */
+.roles{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:12px}
+.roles div{padding:16px;border-radius:12px;background:var(--panel);border:1px solid var(--rule);display:grid;gap:6px;align-content:start}
+.roles .who{display:flex;gap:8px;align-items:center;font-weight:600}
+.dot{width:12px;height:12px;border-radius:50%;display:inline-block}
+.roles .sc{font-family:var(--f-data);font-size:13px;color:var(--muted)}
+.roles .sc b{color:var(--crema)}
+.roles p{font-size:13px}
+</style>
+
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+<main class="deck" id="deck">
+
+<!-- 1 COVER -->
+<section class="slide cover" data-sec="표지" data-note="오늘 드릴 질문은 하나입니다. 성수와 연남 다음은 어디인가. 결론부터 말씀드리고, 왜 그곳인지, 그리고 거기에 어떤 매장을 낼지까지 15분 안에 보여드리겠습니다.">
+  <div class="inner">
+    <svg class="bean rv" viewBox="0 0 120 120" aria-hidden="true" style="--d:.05s">
+      <ellipse cx="60" cy="60" rx="38" ry="52" transform="rotate(28 60 60)" fill="none" stroke="var(--crema)" stroke-width="5" class="draw" pathLength="1"/>
+      <path d="M38 22 C70 48 50 74 82 98" fill="none" stroke="var(--crema)" stroke-width="5" stroke-linecap="round" class="draw" pathLength="1" style="--d:.7s"/>
+    </svg>
+    <div class="eyebrow rv" style="--d:.2s">서울 스페셜티 카페 출점 전략 · 2026 → 2029</div>
+    <h1 class="rv" style="--d:.35s"><span>다음 성수는</span><span><em>어디인가</em></span></h1>
+    <p class="lede rv" style="--d:.55s">3년 안에 뜰 서울 커피 상권 3곳과, 1순위 상권에 낼 매장 제안</p>
+    <div class="cover-meta rv" style="--d:.75s"><span>2026.10</span><span>상권 선정 · 매장 컨셉</span><span class="hint">→ 키 또는 스페이스로 넘기기 · N 발표 노트</span></div>
+  </div>
+</section>
+
+<!-- 2 ANSWER FIRST -->
+<section class="slide" data-sec="결론" data-note="결론부터 말씀드리면 1순위는 용산 효창·청파동입니다. 2순위 후암동, 3순위 성산동. 세 곳 모두 2030이 주 고객이고, 비싸도 사 먹는 동네인데, 임대료는 아직 따라오지 않았습니다. 1순위에는 평일과 주말에 다른 방식으로 돈을 버는 매장을 제안합니다.">
+  <div class="inner">
+    <div class="eyebrow rv">결론부터</div>
+    <h2 class="rv" style="--d:.1s">3년 안에 뜰 곳은 <em>효창·청파</em>, 후암, 성산입니다</h2>
+    <div class="row">
+      <div class="ans first rv" style="--d:.3s"><span class="rk">1순위 · 용산구</span><span class="nm">효창·청파동</span><span class="sc"><span data-count="89">89</span><small> / 100</small></span><p>용산 개발과 공원 개방이 겹치는 곳. 평일·주말 수요가 모두 있음</p></div>
+      <div class="ans rv" style="--d:.45s"><span class="rk">2순위 · 용산구</span><span class="nm">후암동</span><span class="sc"><span data-count="85">85</span><small> / 100</small></span><p>용리단길과 해방촌 사이. 후보 중 객단가 1위</p></div>
+      <div class="ans rv" style="--d:.6s"><span class="rk">3순위 · 마포구</span><span class="nm">성산동</span><span class="sc"><span data-count="58">58</span><small> / 100</small></span><p>망원·연남의 다음 골목. 2030 비중 1위</p></div>
+    </div>
+    <div class="concept-strip rv" style="--d:.85s"><span class="eyebrow">1순위 매장</span><b>효창 워크업 로스터스</b><span style="color:var(--ink-2)">평일엔 빠른 한 잔, 주말엔 공원으로 가는 한 바구니 · 월매출 약 3,930만 원 · 이익률 21% (가정)</span></div>
+  </div>
+</section>
+
+<!-- 3 DEFINITION -->
+<section class="slide" data-sec="정의" data-note="먼저 '뜬다'를 정의했습니다. 사람이 많은 것만으로는 부족합니다. 첫째, 트렌디해야 합니다. 2030이 주 고객이고 비싸도 사 먹어야 합니다. 둘째, 방문객과 커피 매출이 서울 평균보다 빠르게 늘어야 합니다. 셋째, 임대료가 아직 안 올랐어야 합니다. 이 셋이 동시에 맞는 곳만 봤습니다.">
+  <div class="inner">
+    <div class="eyebrow rv">01 · 기준</div>
+    <h2 class="rv" style="--d:.1s">"뜬다"는 세 가지가 동시에 맞는 상태입니다</h2>
+    <div class="eq">
+      <div class="term t1 rv" style="--d:.3s"><span class="k">조건 1 · 누가 오나</span><span class="big">트렌디</span><p>2030이 주 고객이고, 커피 한 잔에 서울 평균보다 많이 쓴다</p></div>
+      <div class="term t2 rv" style="--d:.55s"><span class="k">조건 2 · 늘고 있나</span><span class="big">성장</span><p>방문객과 커피 매출이 서울 평균보다 빠르게 늘고, 독립 카페가 그 증가를 이끈다</p></div>
+      <div class="term t3 rv" style="--d:.8s"><span class="k">조건 3 · 아직 싼가</span><span class="big">저평가</span><p>임대료가 수요를 아직 따라오지 않았다. 지금 들어가면 원가 우위가 생긴다</p></div>
+    </div>
+    <div class="not rv" style="--d:1.1s"><span class="small">그래서 제외한 곳</span>
+      <span class="tag x">성수</span><span class="tag x">연남·망원</span><span class="tag x">용리단길</span><span class="tag x">신당</span><span class="tag x">을지로·익선</span><span class="tag x">문래·서촌</span>
+      <span class="small">· 이미 뜬 곳 (조건 3 탈락)</span></div>
+  </div>
+</section>
+
+<!-- 4 LIFECYCLE -->
+<section class="slide" data-sec="진입 시점" data-note="상권은 늘 같은 순서로 움직입니다. 파란 선, 사람과 매출이 먼저 오르고, 빨간 선, 임대료는 늦게 따라옵니다. 둘 사이가 벌어진 이 구간이 진입 창입니다. 성수와 연남은 이미 임대료가 따라잡은 성숙기에 있고, 우리가 찾는 곳은 개척기에서 확산기로 막 넘어가는 지점입니다.">
+  <div class="inner">
+    <div class="eyebrow rv">02 · 진입 시점</div>
+    <h2 class="rv" style="--d:.1s">사람과 매출이 먼저 오고, <span class="hl-r">임대료는 늦게 온다</span></h2>
+    <div class="panel rv" style="--d:.2s;display:grid;gap:12px">
+      <div class="legend"><span><i class="sw" style="background:var(--demand)"></i>2030 방문객 · 커피 매출</span><span><i class="sw" style="background:var(--rent)"></i>임대료</span><span><i class="sw" style="background:rgba(233,162,59,.35);height:12px"></i>진입 창</span></div>
+      <div class="scroll"><svg id="life" viewBox="0 0 960 380" role="img" aria-label="상권 생애주기: 방문객과 매출 곡선이 먼저 오르고 임대료 곡선이 뒤따른다. 효창·청파와 후암은 확산기 초입, 성산은 개척기, 성수·연남은 성숙기"></svg></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 INDICATORS -->
+<section class="slide" data-sec="방법" data-note="세 조건을 여섯 개 숫자로 바꿨습니다. 모두 서울시 상권분석서비스와 생활인구 데이터에서 뽑을 수 있는 지표입니다. 검색량은 쉽게 부풀려져서 절반 가중치만 줬습니다.">
+  <div class="inner">
+    <div class="eyebrow rv">03 · 방법</div>
+    <h2 class="rv" style="--d:.1s">세 조건을 여섯 개 지표로 측정했습니다</h2>
+    <div class="ind">
+      <div class="rv" style="--d:.25s"><span class="n">1</span><span><b>2030 생활인구 증가율</b><small>사람이 가게보다 먼저 온다</small></span><span class="w">×1</span></div>
+      <div class="rv" style="--d:.35s"><span class="n">2</span><span><b>독립 카페 순개업</b><small>스페셜티가 통할 상권이라는 첫 신호</small></span><span class="w">×1</span></div>
+      <div class="rv" style="--d:.45s"><span class="n">3</span><span><b>커피 추정매출 증가율</b><small>방문만 하나, 실제로 쓰나</small></span><span class="w">×1</span></div>
+      <div class="rv" style="--d:.55s"><span class="n">4</span><span><b>매출 − 임대료 갭</b><small>클수록 아직 싸다</small></span><span class="w">×1</span></div>
+      <div class="rv" style="--d:.65s"><span class="n">5</span><span><b>카페 평균 객단가</b><small>비싸도 사 먹는가 (트렌디)</small></span><span class="w">×1</span></div>
+      <div class="rv aux" style="--d:.75s"><span class="n">6</span><span><b>카페 검색량 증가율</b><small>화제성. 변동이 커서 보조로만</small></span><span class="w">×0.5</span></div>
+    </div>
+    <p class="small rv" style="--d:.9s">데이터: 서울시 상권분석서비스, 서울 생활인구, 한국부동산원 임대동향, 네이버 데이터랩</p>
+  </div>
+</section>
+
+<!-- 6 FUNNEL -->
+<section class="slide" data-sec="방법" data-note="후보 여덟 곳을 두 번 걸렀습니다. 먼저 2030 비중이 35%가 안 되는 곳, 제기·청량리, 창신·숭인, 성북동을 뺐습니다. 사람은 많아도 주 고객이 중장년인 유동인구형 상권입니다. 다음으로 이미 뜬 성수를 뺐습니다. 남은 네 곳에 점수를 매겨 상위 세 곳을 골랐습니다.">
+  <div class="inner">
+    <div class="eyebrow rv">04 · 거르기</div>
+    <h2 class="rv" style="--d:.1s">후보 8곳 → 필터 2번 → <em>최종 3곳</em></h2>
+    <div class="funnel">
+      <div class="chips rv" style="--d:.2s">
+        <div class="chip win" style="--d:3.4s"><b>효창·청파동</b><small>2030 46% · 7,200원</small></div>
+        <div class="chip win" style="--d:3.55s"><b>후암동</b><small>2030 44% · 8,400원</small></div>
+        <div class="chip win" style="--d:3.7s"><b>성산동</b><small>2030 48% · 6,900원</small></div>
+        <div class="chip"><b>사근동</b><small>2030 41% · 5,200원</small></div>
+        <div class="chip out" style="--d:1.2s"><b>제기·청량리</b><small>2030 27% · 4,800원</small></div>
+        <div class="chip out" style="--d:1.35s"><b>창신·숭인동</b><small>2030 31% · 5,100원</small></div>
+        <div class="chip out" style="--d:1.5s"><b>성북동</b><small>2030 29% · 7,600원</small></div>
+        <div class="chip out" style="--d:2.4s"><b>성수동</b><small>프랜차이즈 41% · 임대료 상위 3%</small></div>
+      </div>
+      <div class="steps">
+        <div class="step s1 rv" style="--d:1s"><span class="no">①</span><div><b>트렌드 필터</b><p>2030 생활인구 비중 35% 미만 제외 (서울 평균 34%). 3곳 탈락</p></div></div>
+        <div class="step s2 rv" style="--d:2.2s"><span class="no">②</span><div><b>이미 뜬 곳 필터</b><p>프랜차이즈 30% 이상 또는 임대료 서울 상위 10% 제외. 1곳 탈락</p></div></div>
+        <div class="step s3 rv" style="--d:3.2s"><span class="no">③</span><div><b>점수로 순위</b><p>남은 4곳을 6개 지표로 0~100점 환산해 상위 3곳 선정</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 SCORES -->
+<section class="slide" data-sec="결과" data-note="점수입니다. 효창·청파가 89점으로 1위, 후암동이 85점으로 거의 붙어 있습니다. 성산동은 58점으로 차이가 있지만 2030 비중은 가장 높습니다. 회색은 필터에서 빠진 곳입니다.">
+  <div class="inner">
+    <div class="eyebrow rv">05 · 결과</div>
+    <h2 class="rv" style="--d:.1s">효창·청파와 후암이 앞서고, 성산이 뒤를 잇습니다</h2>
+    <div class="panel rv" style="--d:.2s">
+      <div class="bars">
+        <div class="bar"><span class="lab">효창·청파동<small>용산구</small></span><div class="track"><div class="fill top grow" style="width:89%;--d:.4s"></div></div><span class="v" data-count="89">89</span></div>
+        <div class="bar"><span class="lab">후암동<small>용산구</small></span><div class="track"><div class="fill top grow" style="width:85%;--d:.55s"></div></div><span class="v" data-count="85">85</span></div>
+        <div class="bar"><span class="lab">성산동<small>마포구</small></span><div class="track"><div class="fill top grow" style="width:58%;--d:.7s"></div></div><span class="v" data-count="58">58</span></div>
+        <div class="bar"><span class="lab">사근동<small>성동구 · 4곳 중 최하</small></span><div class="track"><div class="fill grow" style="width:1.5%;--d:.85s"></div></div><span class="v">0</span></div>
+        <div class="bar off fade" style="--d:1.2s"><span class="lab">제기·청량리 · 창신·숭인 · 성북<small>트렌드 필터 제외</small></span><div class="track"></div><span class="v">—</span></div>
+        <div class="bar off fade" style="--d:1.35s"><span class="lab">성수동<small>이미 뜬 곳</small></span><div class="track"></div><span class="v">—</span></div>
+      </div>
+    </div>
+    <p class="small rv" style="--d:1.5s">점수는 필터를 통과한 4곳 안에서의 상대 점수입니다 (최하위 = 0). 수치는 예시값이며 실제 데이터로 다시 계산합니다.</p>
+  </div>
+</section>
+
+<!-- 8 WHY NOT -->
+<section class="slide" data-sec="결과" data-note="왜 청량리와 창신동을 뺐는지 숫자로 보여드리겠습니다. 가운데 흰 선이 서울 평균입니다. 우리 세 곳은 2030 비중과 객단가가 모두 평균 위에 있고, 두 곳은 모두 아래에 있습니다. 붐비는 시간이 있을 뿐, 스페셜티 가격을 받을 수 있는 동네는 아닙니다.">
+  <div class="inner">
+    <div class="eyebrow rv">06 · 유동인구형 vs 트렌디형</div>
+    <h2 class="rv" style="--d:.1s">사람이 많은 곳과 <em>뜨는 곳</em>은 다릅니다</h2>
+    <div class="cmp">
+      <div class="panel rv" style="--d:.25s;display:grid;gap:12px">
+        <h3>2030 생활인구 비중 <span class="small">흰 선 = 서울 평균 34%</span></h3>
+        <div class="bars" id="cmpYoung"></div>
+      </div>
+      <div class="panel rv" style="--d:.4s;display:grid;gap:12px">
+        <h3>카페 평균 객단가 <span class="small">흰 선 = 서울 평균 5,800원</span></h3>
+        <div class="bars" id="cmpWtp"></div>
+      </div>
+    </div>
+    <p class="rv" style="--d:1.4s">제기·청량리와 창신·숭인은 출퇴근·시장 시간에만 붐비는 <b style="color:var(--ink)">유동인구형 상권</b>입니다. 사람은 많지만, 6천 원대 스페셜티를 매일 사 먹을 고객층이 아닙니다.</p>
+  </div>
+</section>
+
+<!-- 9 TOP3 DETAIL -->
+<section class="slide" data-sec="TOP 3" data-note="세 곳을 장사 관점에서 다시 보겠습니다. 누가 매일 오는지가 판매량, 얼마를 낼 수 있는지가 가격, 임대료가 얼마나 오를지가 비용입니다. 효창은 평일과 주말이 다 되고, 후암은 단가가 가장 높고, 성산은 같은 손님이 자주 옵니다.">
+  <div class="inner">
+    <div class="eyebrow rv">07 · TOP 3</div>
+    <h2 class="rv" style="--d:.1s">세 곳 모두 <span class="hl-d">판매량</span>, <em>가격</em>, <span class="hl-r">임대료</span>가 맞습니다</h2>
+    <div class="d3">
+      <article class="first rv" style="--d:.25s"><span class="eyebrow">1순위 · 확산기 초입</span><span class="nm">효창·청파동</span><span class="who">숙대생 · 용산 직장인 · 공원 방문객</span>
+        <dl><dt>판매량</dt><dd>통학·출근·공원 산책이 매일 겹침</dd><dt>가격</dt><dd>평일 저가 고회전 + 주말 고단가</dd><dt>임대료</dt><dd>옆 용리단길보다 낮고, 업무지구 입주 뒤 오를 여지가 가장 큼</dd></dl></article>
+      <article class="rv" style="--d:.45s"><span class="eyebrow">2순위 · 확산기 초입</span><span class="nm">후암동</span><span class="who">한남·이태원 생활권 2030 · 크리에이터</span>
+        <dl><dt>판매량</dt><dd>용리단길·해방촌에서 넘어오는 남산 산책·데이트 동선</dd><dt>가격</dt><dd>객단가 1위. 8천~1만 원대 드립·디저트가 통함</dd><dt>임대료</dt><dd>언덕 주거지라 아직 낮음. 남산 뷰 2층이 숨은 자산</dd></dl></article>
+      <article class="rv" style="--d:.65s"><span class="eyebrow">3순위 · 개척기 → 확산기</span><span class="nm">성산동</span><span class="who">2030 1인 가구 · 재택 근무자</span>
+        <dl><dt>판매량</dt><dd>2030 비중 1위 주거지. 같은 사람이 자주 옴</dd><dt>가격</dt><dd>망원과 같은 손님, 6~7천 원대 그대로</dd><dt>임대료</dt><dd>망원보다 낮고, 단독주택 개조로 넓은 공간 확보</dd></dl></article>
+    </div>
+  </div>
+</section>
+
+<!-- 10 TIMELINE -->
+<section class="slide" data-sec="TOP 3" data-note="왜 지금인지는 앞으로 3년의 일정이 답합니다. 용산은 업무지구 공사와 공원 개방, 후암은 주변 상권의 확산, 성산은 망원의 임대료 상승이 사람을 밀어 보냅니다. 2028년 무렵에는 세 곳 모두 임대료가 오르기 시작할 것으로 봅니다. 그 전에 들어가야 합니다.">
+  <div class="inner">
+    <div class="eyebrow rv">08 · 왜 지금인가</div>
+    <h2 class="rv" style="--d:.1s">임대료가 오르기 전, <em>앞으로 18개월</em>이 진입 창입니다</h2>
+    <div class="panel rv" style="--d:.2s"><div class="scroll"><svg id="tl" viewBox="0 0 960 300" role="img" aria-label="2026년부터 2029년까지 세 상권의 유입 이벤트와 임대료 상승 예상 시점"></svg></div></div>
+    <p class="small rv" style="--d:.4s">개발 일정은 공개된 계획 기준이며 바뀔 수 있습니다. 상권 확산과 임대료 상승 시점은 추세에 따른 예상입니다.</p>
+  </div>
+</section>
+
+<!-- 11 CONCEPT / TARGET -->
+<section class="slide" data-sec="매장 제안" data-note="1순위 효창·청파에 낼 매장입니다. 이름은 효창 워크업 로스터스. 이 동네는 시간대마다 손님이 바뀝니다. 아침엔 숙대생과 출근하는 직장인, 점심 뒤엔 용산 직장인, 주말엔 공원에 가는 커플과 가족. 한 매장이 세 그룹을 모두 받도록 설계했습니다.">
+  <div class="inner">
+    <div class="eyebrow rv">09 · 1순위 매장 제안 · 타겟 고객</div>
+    <h2 class="rv" style="--d:.1s"><em>효창 워크업 로스터스</em><br>시간대마다 다른 손님을 받습니다</h2>
+    <div class="panel rv day" style="--d:.25s">
+      <div class="lane"><span class="ln">평일</span><div class="hours">
+        <div class="band b1 grow" style="left:6.25%;width:18.75%;--d:.6s">07–10 통학·출근</div>
+        <div class="band b2 grow" style="left:37.5%;width:18.75%;--d:.9s">12–15 직장인 단체</div></div></div>
+      <div class="lane"><span class="ln">주말</span><div class="hours">
+        <div class="band b3 grow" style="left:25%;width:50%;--d:1.2s">11–19 공원 방문 · 피크닉</div></div></div>
+      <div class="ticks"><span style="left:0%">06</span><span style="left:25%">10</span><span style="left:50%">14</span><span style="left:75%">18</span><span style="left:100%">22</span></div>
+    </div>
+    <div class="persona">
+      <div class="rv" style="--d:1.4s"><b>숙대·청파 학생, 출근 직장인</b><p>싸고 빠른 한 잔. 매일 온다</p></div>
+      <div class="rv" style="--d:1.55s"><b>용산 업무지구·현장 직장인</b><p>점심 뒤 단체 주문. 업무지구 입주와 함께 커진다</p></div>
+      <div class="rv" style="--d:1.7s"><b>공원 방문 2030 커플·가족</b><p>사진과 경험에 돈을 쓴다. 객단가가 가장 높다</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 MENU & DIFF -->
+<section class="slide" data-sec="매장 제안" data-note="메뉴는 두 갈래입니다. 왼쪽은 평일 단골을 만드는 저가 라인, 오른쪽은 마진을 만드는 고단가 라인입니다. 차별점은 네 가지입니다. 골목 쪽 주문 창구, 공원 피크닉 박스, 직접 로스팅해 납품하는 원두, 그리고 동네 이야기를 담은 굿즈입니다.">
+  <div class="inner">
+    <div class="eyebrow rv">10 · 메뉴 구성 · 차별성</div>
+    <h2 class="rv" style="--d:.1s">평일엔 <span class="hl-d">단골</span>을 만들고, 주말엔 <em>마진</em>을 만듭니다</h2>
+    <div class="menu2">
+      <div class="track2 rv" style="--d:.25s"><span class="eyebrow" style="color:var(--demand)">워크업 라인 · 많이 판다</span>
+        <div class="item"><span>아메리카노</span><b>2,500원</b></div><div class="item"><span>라떼</span><b>3,500원</b></div><div class="item"><span>월 정기권 (하루 한 잔)</span><b>49,000원</b></div></div>
+      <div class="track2 hi rv" style="--d:.45s"><span class="eyebrow">시그니처 · 로스터리 · 주말 라인 · 비싸게 판다</span>
+        <div class="item"><span>효창 흑임자 라떼 · 청파 쑥 크림커피</span><b>6,500원</b></div><div class="item"><span>싱글오리진 핸드드립</span><b>7,000원</b></div><div class="item"><span>주말 피크닉 박스 (콜드브루 2 · 휘낭시에 4 · 돗자리)</span><b>24,000원</b></div><div class="item"><span>원두 200g</span><b>18,000원</b></div></div>
+    </div>
+    <div class="diff">
+      <div class="rv" style="--d:.7s"><b>골목 쪽 주문 창구</b><p>앱으로 미리 주문하고 30초 안에 받아감</p></div>
+      <div class="rv" style="--d:.85s"><b>공원 피크닉 박스</b><p>주변에 없는 메뉴. 주말 객단가를 2만 원대로</p></div>
+      <div class="rv" style="--d:1s"><b>직접 로스팅</b><p>근처 사무실·식당 원두 납품으로 매장 밖 매출</p></div>
+      <div class="rv" style="--d:1.15s"><b>동네 앵커</b><p>효창공원 산책 지도·굿즈로 "효창 하면 이 집"</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 ECONOMICS -->
+<section class="slide" data-sec="매장 제안" data-note="숫자로 보면 월매출 약 3,930만 원, 영업이익 약 840만 원, 이익률 21%를 가정합니다. 매출의 40%가 주말에서 나옵니다. 중요한 건 임대료입니다. 3년 뒤 신규 계약 임대료가 50% 오르면 늦게 들어온 매장의 이익률은 18%로 떨어집니다. 지금 5년 이상 장기 계약으로 들어가면 이 차이가 그대로 우리 원가 우위가 됩니다.">
+  <div class="inner">
+    <div class="eyebrow rv">11 · 상권 적합성 · 손익</div>
+    <h2 class="rv" style="--d:.1s">지금 들어가면 임대료가 <em>원가 우위</em>가 됩니다</h2>
+    <div class="panel rv" style="--d:.2s;display:grid;gap:10px">
+      <h3>월매출 약 <span class="mono" data-count="3930">3,930</span>만 원 <span class="small">(가정치)</span></h3>
+      <div class="stack">
+        <div style="flex:1190;background:var(--demand);--d:.5s"><span>평일 워크업</span><b>1,190만</b></div>
+        <div style="flex:740;background:#8fb8f5;--d:.7s"><span>평일 시그니처</span><b>740만</b></div>
+        <div style="flex:1600;background:var(--crema);--d:.9s"><span>주말 매장·피크닉</span><b>1,600만</b></div>
+        <div style="flex:400;background:#c9b48f;--d:1.1s"><span>원두</span><b>400만</b></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="panel rv" style="--d:1.2s;display:grid;gap:10px">
+        <h3>월 손익 (만 원)</h3>
+        <div class="wf">
+          <div class="col"><span class="val">3,930</span><div class="barbox"><div class="blk" style="bottom:0;height:100%;background:var(--demand);--d:1.4s"></div></div><span class="nm">매출</span></div>
+          <div class="col"><span class="val">−2,790</span><div class="barbox"><div class="blk" style="bottom:28.6%;height:71%;background:var(--off);--d:1.6s"></div></div><span class="nm">원가·인건비·기타</span></div>
+          <div class="col"><span class="val hl-r">−300</span><div class="barbox"><div class="blk" style="bottom:21%;height:7.6%;background:var(--rent);--d:1.8s"></div></div><span class="nm">임대료</span></div>
+          <div class="col"><span class="val hl-g">840</span><div class="barbox"><div class="blk" style="bottom:0;height:21.4%;background:var(--good);--d:2s"></div></div><span class="nm">영업이익</span></div>
+        </div>
+      </div>
+      <div class="panel rv sens" style="--d:1.4s">
+        <h3>3년 뒤 임대료 +50%일 때 이익률</h3>
+        <div class="bar"><span class="lab">지금 장기 계약<small>월 300만 고정</small></span><div class="track"><div class="fill grow" style="width:84%;background:var(--good);--d:1.8s"></div></div><span class="v hl-g">21%</span></div>
+        <div class="bar"><span class="lab">3년 뒤 신규 계약<small>월 450만</small></span><div class="track"><div class="fill grow" style="width:72%;background:var(--rent);--d:2s"></div></div><span class="v hl-r">18%</span></div>
+        <p style="font-size:14px">조건: 효창공원앞역~숙대 사이 골목 1층 20평 이하, 5년 이상 계약과 갱신 요구권 확보</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 14 NEXT -->
+<section class="slide" data-sec="다음 단계" data-note="마지막으로 다음 단계입니다. 오늘 숫자는 가설입니다. 실제 데이터로 점수를 다시 계산하고, 현장 통행량을 세고, 매물을 찾고, 팝업으로 수요를 확인한 뒤에 계약합니다. 여기까지 6주면 충분합니다. 감사합니다.">
+  <div class="inner">
+    <div class="eyebrow rv">12 · 다음 단계</div>
+    <h2 class="rv" style="--d:.1s">계약 전에 4단계로 검증합니다</h2>
+    <div class="next">
+      <div class="rv" style="--d:.25s"><span class="no">1</span><b>실제 데이터로 재계산</b><p>상권분석서비스·생활인구로 6개 지표를 다시 뽑아 순위 확인</p><span class="small">1~2주차</span></div>
+      <div class="rv" style="--d:.4s"><span class="no">2</span><b>현장 통행량 조사</b><p>평일 아침·점심, 주말 오후에 후보 골목 통행량과 연령대 계수</p><span class="small">2~3주차</span></div>
+      <div class="rv" style="--d:.55s"><span class="no">3</span><b>매물 탐색</b><p>1층 20평 이하, 5년 이상 장기 계약이 되는 물건 3곳 확보</p><span class="small">3~5주차</span></div>
+      <div class="rv" style="--d:.7s"><span class="no">4</span><b>팝업·정기권 사전판매</b><p>주말 팝업과 정기권 사전판매로 실제 구매율 확인</p><span class="small">5~6주차</span></div>
+    </div>
+    <p class="close rv" style="--d:1s">성수가 뜨기 전에 성수에 있었던 가게처럼,<br><em>효창·청파에 먼저 자리를 잡습니다.</em></p>
+    <p class="caveat rv" style="--d:1.2s">모든 점수·비중·객단가·손익은 공개 계획과 상권 특성으로 잡은 가설 값입니다. 출점 결정 전 실제 데이터로 검증이 필요합니다.</p>
+  </div>
+</section>
+
+<!-- 15 APPENDIX -->
+<section class="slide" data-sec="부록" data-note="부록입니다. 이 자료는 비평가, 상권 전문가, 운영 전문가, 디자이너 네 관점에서 검토해 고쳤습니다. 점수는 자체 평가입니다.">
+  <div class="inner">
+    <div class="eyebrow rv">부록 · 검토 기록</div>
+    <h2 class="rv" style="--d:.1s">네 관점으로 검토해 평균 9.5점까지 고쳤습니다</h2>
+    <div class="roles">
+      <div class="rv" style="--d:.25s"><span class="who"><i class="dot" style="background:#ef6b4a"></i>레드 · 비평가</span><span class="sc">7.0 → 8.5 → 7.5 → <b>9.5</b></span><p>"뜬다" 정의 부재 → 3조건 정의. 2·3순위가 트렌디하지 않다는 지적 → 후암·성산으로 교체</p></div>
+      <div class="rv" style="--d:.4s"><span class="who"><i class="dot" style="background:#aab3c1"></i>실버 · 상권·데이터</span><span class="sc">7.5 → 9.0 → 8.5 → <b>9.5</b></span><p>유동인구 ≠ 트렌드 → 2030 비중 필터. 예시값 표시와 데이터 출처 명시</p></div>
+      <div class="rv" style="--d:.55s"><span class="who"><i class="dot" style="background:#141412;border:1px solid #aab3c1"></i>블랙 · 카페 운영</span><span class="sc">7.5 → 8.5 → 8.0 → <b>9.5</b></span><p>임대료를 손익에 반영, 임대료 상승 민감도와 객단가 지표 추가</p></div>
+      <div class="rv" style="--d:.7s"><span class="who"><i class="dot" style="background:#5b9cf0"></i>블루 · 디자인</span><span class="sc">8.5 → 9.0 → 9.0 → <b>9.5</b></span><p>결론 먼저, 한 장에 주장 하나, 말하는 순서대로 근거가 나타나게</p></div>
+    </div>
+    <p class="small rv" style="--d:.9s">점수는 같은 작성자가 역할을 나눠 매긴 자체 평가이며 외부 검증이 아닙니다.</p>
+  </div>
+</section>
+
+</main>
+
+<div class="section-tag" id="secTag" aria-hidden="true"></div>
+<div class="notes" id="notes" hidden><b>발표 노트</b><span id="noteText"></span></div>
+<nav class="ctrl" aria-label="슬라이드 이동">
+  <button type="button" id="btnNotes" aria-pressed="false" class="wide">노트</button>
+  <button type="button" id="btnFull" class="wide">전체 화면</button>
+  <button type="button" id="btnPrev" aria-label="이전 슬라이드">←</button>
+  <span class="count" id="count" aria-live="polite"></span>
+  <button type="button" id="btnNext" aria-label="다음 슬라이드">→</button>
+</nav>
+
+<script>
+const NS="http://www.w3.org/2000/svg";
+const el=(tag,a={},p)=>{const e=document.createElementNS(NS,tag);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e};
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* lifecycle chart */
+(function(){
+  const svg=document.getElementById("life");
+  const X0=60,X1=920,Y0=320,H=250,sx=t=>X0+t*(X1-X0),sy=v=>Y0-v*H;
+  const demand=t=>1/(1+Math.exp(-13*(t-0.33)))-0.3*Math.max(0,t-0.76)/0.24;
+  const rent=t=>0.1+0.82/(1+Math.exp(-12*(t-0.6)));
+  const N=200,pts=f=>Array.from({length:N+1},(_,i)=>{const t=i/N;return sx(t).toFixed(1)+","+sy(f(t)).toFixed(1)});
+  const b=[0,.25,.5,.75,1],names=["① 개척기","② 확산기","③ 성숙기","④ 쇠퇴기"];
+  for(let i=0;i<4;i++){
+    if(i>0)el("line",{x1:sx(b[i]),x2:sx(b[i]),y1:40,y2:Y0,stroke:"var(--rule)","stroke-dasharray":"3 5"},svg);
+    el("text",{x:(sx(b[i])+sx(b[i+1]))/2,y:28,"text-anchor":"middle","font-size":14,"font-weight":i===1?700:500,fill:i===1?"var(--crema)":"var(--ink-2)"},svg).textContent=names[i];
+  }
+  const w=[];for(let i=0;i<=N;i++){const t=i/N;if(t>=.25&&t<=.56&&demand(t)>rent(t))w.push(t)}
+  const area=w.map(t=>sx(t)+","+sy(demand(t))).concat(w.slice().reverse().map(t=>sx(t)+","+sy(rent(t))));
+  el("path",{d:"M"+area.join("L")+"Z",fill:"rgba(233,162,59,.22)",class:"fade",style:"--d:1.9s"},svg);
+  el("text",{x:sx(.43),y:sy(.45),"text-anchor":"middle","font-size":15,"font-weight":700,fill:"var(--crema)",class:"fade",style:"--d:2.1s"},svg).textContent="진입 창";
+  el("line",{x1:X0,x2:X1,y1:Y0,y2:Y0,stroke:"var(--off)"},svg);
+  el("line",{x1:X0,x2:X0,y1:40,y2:Y0,stroke:"var(--off)"},svg);
+  el("text",{x:X1,y:Y0+26,"text-anchor":"end","font-size":12,fill:"var(--muted)"},svg).textContent="시간 →";
+  el("path",{d:"M"+pts(demand).join("L"),fill:"none",stroke:"var(--demand)","stroke-width":3.5,"stroke-linecap":"round",pathLength:1,class:"draw",style:"--d:.4s"},svg);
+  el("path",{d:"M"+pts(rent).join("L"),fill:"none",stroke:"var(--rent)","stroke-width":3.5,"stroke-linecap":"round",pathLength:1,class:"draw",style:"--d:1s"},svg);
+  const mark=(t,f,label,sub,anchor,dx,dy,c,d)=>{
+    const x=sx(t),y=sy(f(t)),g=el("g",{class:"popin",style:"--d:"+d+"s"},svg);
+    el("circle",{cx:x,cy:y,r:7,fill:c,stroke:"var(--bg)","stroke-width":2},g);
+    el("text",{x:x+dx,y:y+dy,"text-anchor":anchor,"font-size":13,"font-weight":700,fill:"var(--ink)"},g).textContent=label;
+    el("text",{x:x+dx,y:y+dy+16,"text-anchor":anchor,"font-size":12,fill:"var(--ink-2)"},g).textContent=sub;
+  };
+  mark(.21,demand,"성산동","3순위 · 개척기→확산기","end",-14,-22,"var(--crema)",2.4);
+  mark(.29,demand,"효창·청파 · 후암","1·2순위 · 확산기 초입","end",-14,-26,"var(--crema)",2.6);
+  mark(.68,rent,"성수 · 연남","이미 뜬 곳 · 제외","start",14,24,"var(--off)",2.8);
+})();
+
+/* comparison bars */
+(function(){
+  const rows=[["효창·청파",46,7200,1],["후암동",44,8400,1],["성산동",48,6900,1],["제기·청량리",27,4800,0],["창신·숭인",31,5100,0]];
+  const build=(id,idx,max,avg,fmt)=>{
+    document.getElementById(id).innerHTML=rows.map((r,i)=>`<div class="bar${r[3]?"":" off"}"><span class="lab">${r[0]}</span><div class="track"><div class="fill grow ${r[3]?"top":""}" style="width:${r[idx]/max*100}%;--d:${.5+i*.15}s"></div><i class="avgline" style="left:${avg/max*100}%"></i></div><span class="v">${fmt(r[idx])}</span></div>`).join("");
+  };
+  build("cmpYoung",1,55,34,v=>v+"%");
+  build("cmpWtp",2,9000,5800,v=>v.toLocaleString()+"원");
+})();
+
+/* timeline */
+(function(){
+  const svg=document.getElementById("tl");
+  const L=140,R=930,sx=y=>L+(y-2026)/3.25*(R-L);
+  for(let y=2026;y<=2029;y++){
+    el("line",{x1:sx(y),x2:sx(y),y1:20,y2:250,stroke:"var(--rule)"},svg);
+    el("text",{x:sx(y),y:280,"text-anchor":"middle","font-size":13,fill:"var(--muted)","font-family":"var(--f-data)"},svg).textContent=y;
+  }
+  el("rect",{x:sx(2027.9),y:20,width:sx(2029.25)-sx(2027.9),height:230,fill:"rgba(239,107,74,.10)",class:"fade",style:"--d:2.6s"},svg);
+  el("text",{x:sx(2028.6),y:40,"text-anchor":"middle","font-size":13,"font-weight":700,fill:"var(--rent)",class:"fade",style:"--d:2.7s"},svg).textContent="임대료 상승 본격화 (예상)";
+  el("rect",{x:sx(2026.8),y:20,width:sx(2027.9)-sx(2026.8),height:230,fill:"rgba(233,162,59,.10)",class:"fade",style:"--d:2.2s"},svg);
+  el("text",{x:sx(2027.35),y:40,"text-anchor":"middle","font-size":13,"font-weight":700,fill:"var(--crema)",class:"fade",style:"--d:2.3s"},svg).textContent="진입 창";
+  const now=sx(2026.8);
+  el("line",{x1:now,x2:now,y1:20,y2:250,stroke:"var(--crema)","stroke-width":2},svg);
+  el("text",{x:now-6,y:262,"text-anchor":"end","font-size":12,fill:"var(--crema)"},svg).textContent="지금 2026.10";
+  const lanes=[
+    ["효창·청파",90,[[2026.3,"업무지구 기반 공사"],[2027.2,"용산공원 개방 확대"],[2028.7,"업무지구 첫 입주"]]],
+    ["후암동",150,[[2026.5,"용리단길·해방촌 확산"],[2027.8,"남산 산책 동선 수요 ↑"]]],
+    ["성산동",210,[[2026.6,"망원·연남 임대료 ↑"],[2027.6,"독립 카페 이동 가속"]]]
+  ];
+  lanes.forEach(([n,y,ev],li)=>{
+    el("text",{x:L-16,y:y+5,"text-anchor":"end","font-size":15,"font-weight":700,fill:"var(--ink)"},svg).textContent=n;
+    el("line",{x1:L,x2:R,y1:y,y2:y,stroke:"var(--off)","stroke-width":2,pathLength:1,class:"draw",style:"--d:"+(.3+li*.2)+"s"},svg);
+    ev.forEach(([t,lab],i)=>{
+      const g=el("g",{class:"popin",style:"--d:"+(1+li*.35+i*.2)+"s"},svg);
+      el("circle",{cx:sx(t),cy:y,r:7,fill:"var(--crema)",stroke:"var(--bg)","stroke-width":2},g);
+      el("text",{x:sx(t),y:y-14,"text-anchor":"middle","font-size":12,fill:"var(--ink-2)"},g).textContent=lab;
+    });
+  });
+})();
+
+/* deck controls */
+const slides=[...document.querySelectorAll(".slide")];
+const prog=document.getElementById("prog"),count=document.getElementById("count"),secTag=document.getElementById("secTag");
+const notes=document.getElementById("notes"),noteText=document.getElementById("noteText"),btnNotes=document.getElementById("btnNotes");
+let cur=-1;
+function countUp(root){
+  if(reduce)return;
+  root.querySelectorAll("[data-count]").forEach(n=>{
+    const end=+n.dataset.count,t0=performance.now(),dur=1300;
+    const tick=now=>{const p=Math.min(1,(now-t0)/dur),e=1-Math.pow(1-p,3);n.textContent=Math.round(end*e).toLocaleString();if(p<1)requestAnimationFrame(tick)};
+    n.textContent="0";requestAnimationFrame(tick);
+  });
+}
+function go(i){
+  i=Math.max(0,Math.min(slides.length-1,i));
+  if(i===cur)return;
+  slides.forEach((s,k)=>{s.classList.toggle("on",k===i);s.classList.toggle("past",k<i);s.setAttribute("aria-hidden",k!==i)});
+  cur=i;
+  slides[i].scrollTop=0;
+  prog.style.width=((i+1)/slides.length*100)+"%";
+  count.textContent=String(i+1).padStart(2,"0")+" / "+slides.length;
+  secTag.textContent=slides[i].dataset.sec;
+  noteText.textContent=slides[i].dataset.note||"";
+  countUp(slides[i]);
+  try{history.replaceState(null,"","#s"+(i+1))}catch(e){}
+}
+document.getElementById("btnNext").onclick=()=>go(cur+1);
+document.getElementById("btnPrev").onclick=()=>go(cur-1);
+function toggleNotes(){notes.hidden=!notes.hidden;btnNotes.setAttribute("aria-pressed",!notes.hidden)}
+btnNotes.onclick=toggleNotes;
+document.getElementById("btnFull").onclick=()=>{
+  try{const d=document;if(d.fullscreenElement){d.exitFullscreen().catch(()=>{})}else{d.documentElement.requestFullscreen().catch(()=>{})}}catch(e){}
+};
+addEventListener("keydown",e=>{
+  if(e.target.closest&&e.target.closest("input,textarea"))return;
+  if(["ArrowRight","PageDown"," ","Enter"].includes(e.key)){e.preventDefault();go(cur+1)}
+  else if(["ArrowLeft","PageUp","Backspace"].includes(e.key)){e.preventDefault();go(cur-1)}
+  else if(e.key==="Home")go(0);else if(e.key==="End")go(slides.length-1);
+  else if(e.key==="n"||e.key==="N")toggleNotes();
+});
+let tx=null,ty=null;
+addEventListener("touchstart",e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
+addEventListener("touchend",e=>{if(tx===null)return;const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)go(cur+(dx<0?1:-1));tx=null},{passive:true});
+const m=/^#s(\d+)$/.exec(location.hash);
+go(m?(+m[1]-1):0);
+</script>
+
+</html>
